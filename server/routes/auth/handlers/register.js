@@ -7,7 +7,7 @@ function registerUser (req, res) {
 
   User.register(account, password, (err, user) => {
     if (err) {
-      return res.status(500).json({success: false, msg: 'Username already exists.'})
+      return res.status(500).json({err})
     }
     res.status(200).json(User)
   })
