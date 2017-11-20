@@ -12,7 +12,15 @@ const UserSchema = new Schema({
   email: String,
   profile_img: String,
   occupation: String,
-  friends: [{type: ObjectId, ref: 'User'}]
+  friends: [{type: ObjectId, ref: 'User'}],
+  messages: [{
+    messageId: {type: ObjectId, ref: 'User'}, 
+    message: [{
+      body: String,
+      author: {type: ObjectId, ref: 'User'},
+      cerateAt: {type: Date, default: Date.now}       
+    }]
+  }]
 }, { collection })
 
 UserSchema.plugin(passportLocalMongoose)
