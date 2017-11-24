@@ -7,6 +7,4 @@ const app = require('./server/app')
 db.openUri(URL_DB)
 
 app.listen(PORT)
-console.log(`Listening on PORT ${PORT}...`);
-
-
+console.log(`Listening on PORT ${PORT}...`)
