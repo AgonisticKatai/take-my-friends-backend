@@ -1,27 +1,41 @@
 const User = require('../../../models/User.js')
 
-function sendMessage (req, res) {
+function captureParams (req, res, next) {
   const { _id } = req.user
   const { id } = req.params
   const { message } = req.body
-  console.log(req.body)
-  User.findByIdAndUpdate(id, {
-    $push: { 'conversations': { 'messages': { author: _id, body: message } } }
-  }, { 'new': true })
-  .then(user => { res.status(200).json({ user, msg: 'message added properly...' }) })
-  .catch(error => { res.status(500).json({ error, msg: 'problems sending message...' }) })
+  req.data = { _id, id, message }
+  next()
 }
 
-function saveMessage (req, res) {
-  const { _id } = req.user
-  const { id } = req.params
-  const { message } = req.body
-  console.log(req.body)
-  User.findByIdAndUpdate(_id, {
-    $push: { 'outbox': { 'messages': { adresseer: id, body: message } } }
-  }, { 'new': true })
-  .then(user => { res.status(200).json({ user, msg: 'message added properly...' }) })
-  .catch(error => { res.status(500).json({ error, msg: 'problems sending message...' }) })
+async function sendMessage (req, res, next) {
+  const { _id, id, message } = req.data
+  try {
+    await User.findByIdAndUpdate(id, {
+      $push: { 'conversations': { 'messages': { author: _id, body: message } } }
+    }, { 'new': true })
+    next()
+  } catch (error) {
+    const msg = 'problems in sendMessage...'
+    res.status(500).json({ error, msg })
+  }
 }
 
-module.exports = saveMessage
+async function saveMessage (req, res, next) {
+  const { _id, id, message } = req.data
+  try {
+    await User.findByIdAndUpdate(_id, {
+      $push: { 'outbox': { 'messages': { adresseer: id, body: message } } }
+    }, { 'new': true })
+    next()
+  } catch (error) {
+    const msg = 'problems in saveMessage...'
+    res.status(500).json({ error, msg })
+  }
+}
+
+function sendingMessagesResultOk (req, res) {
+  res.status(200).json({ msg: 'message added properly...' })
+}
+
+module.exports = { captureParams, sendMessage, saveMessage, sendingMessagesResultOk }
