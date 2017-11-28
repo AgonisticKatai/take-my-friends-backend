@@ -4,7 +4,7 @@ const Schema = mongoose.Schema
 const ObjectId = Schema.ObjectId
 const collection = 'users'
 
-const ConversationSchema = new Schema({
+const InboxSchema = new Schema({
   messages: [{
     author: {type: ObjectId, ref: 'User'},
     body: String,
@@ -12,7 +12,7 @@ const ConversationSchema = new Schema({
   }]
 })
 
-const OutBoxSchema = new Schema({
+const OutboxSchema = new Schema({
   messages: [{
     adresseer: {type: ObjectId, ref: 'User'},
     body: String,
@@ -27,8 +27,8 @@ const UserSchema = new Schema({
   profileImg: String,
   occupation: String,
   friends: [{type: ObjectId, ref: 'User'}],
-  conversations: [ ConversationSchema ],
-  outbox: [ OutBoxSchema ]
+  inbox: [ InboxSchema ],
+  outbox: [ OutboxSchema ]
 }, { collection })
 
 UserSchema.plugin(passportLocalMongoose)

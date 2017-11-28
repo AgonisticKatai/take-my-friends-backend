@@ -6,8 +6,6 @@ function getUsers (req, res) {
     if (err) res.status(500).json({ err, msg: 'error finding users...' })
     const suggestions = user.reduce((acc, userData) => {
       if (userData._id !== id) {
-        console.log(id)
-        console.log(userData._id)
         acc.push(userData)
       }
       return acc
@@ -17,13 +15,3 @@ function getUsers (req, res) {
 }
 
 module.exports = getUsers
-
-// const User = require('../../../models/User.js')
-
-// function getUsers (req, res) {
-//   User.find((err, user) => {
-//     res.json(user)
-//   })
-// }
-
-// module.exports = getUsers

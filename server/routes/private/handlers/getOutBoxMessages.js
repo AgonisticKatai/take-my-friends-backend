@@ -1,6 +1,6 @@
 const User = require('../../../models/User.js')
 
-function getOutBoxMessages (req, res) {
+function getOutboxMessages (req, res) {
   const { _id: id } = req.user
   User.findById(id, 'outbox', (err, messages) => {
     if (err) res.status(500).json({ err, msg: 'error finding outbox messages...' })
@@ -11,4 +11,4 @@ function getOutBoxMessages (req, res) {
   })
 }
 
-module.exports = getOutBoxMessages
+module.exports = getOutboxMessages

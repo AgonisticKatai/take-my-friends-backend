@@ -12,7 +12,7 @@ async function sendMessage (req, res, next) {
   const { _id, id, message } = req.data
   try {
     await User.findByIdAndUpdate(id, {
-      $push: { 'conversations': { 'messages': { author: _id, body: message } } }
+      $push: { 'inbox': { 'messages': { author: _id, body: message } } }
     }, { 'new': true })
     next()
   } catch (error) {
