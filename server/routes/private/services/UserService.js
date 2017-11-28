@@ -1,44 +1,52 @@
 const _ = require('lodash')
 const User = require('../../../models/User.js')
 
-const getSuggestions = async (id) => {
-  const suggestions = await getFriendsOfUserFriends(id)
+async function getPopulateSuggestions (id) {
+  const suggestions = await getFriendsOfFriendsNoRepeat(id)
   const suggestionsPopulated = suggestions.map(user => {
-    return getSuggestionsPopulated(user)
+    return getUserById(user)
   })
   let SuggestionsPopulated = await Promise.all(suggestionsPopulated)
   return SuggestionsPopulated
 }
 
-const getSuggestionsPopulated = async (id) => {
+async function getUserById (id) {
   const user = await User.findById(id)
   return user
 }
 
-const getUserFriends = async (id) => {
+async function getFriendsById (id) {
   const { friends } = await User.findById(id)
   return friends
 }
 
-const getFriendsOfUserFriends = async (id) => {
-  const friends = await getUserFriends(id)
+async function getFriendsOfUserFriends (id) {
+  const friends = await getFriendsById(id)
   const FriendsOfFriends = friends.map(friend => {
-    return getUserFriends(friend)
+    return getFriendsById(friend)
   })
   let friendsOfFriends = await Promise.all(FriendsOfFriends)
-  let friendsOfFriendsFlat = _.flattenDeep(friendsOfFriends)
-  let friendsOfFriendsWithoutUser = _.pullAllWith(friendsOfFriendsFlat, [id], _.isEqual)
-  let friendsOfFriendsNoRepeat = _.uniq(friendsOfFriendsWithoutUser)
-
-  // let friendsOfFriendsNoRepeat = friendsOfFriendsWithoutUser.reduce((acc, user) => {
-  //   if (!acc.includes(user)) { acc.push(user) }
-  //   return acc
-  // }, [])
-
-  console.log(friendsOfFriendsNoRepeat)
-
-  // debugger
-  return friendsOfFriendsNoRepeat
+  return friendsOfFriends
 }
 
-module.exports = { getSuggestions, getSuggestionsPopulated, getUserFriends, getFriendsOfUserFriends }
+async function getFriendsOfFriendsToArray (id) {
+  const friendsOfFriendsFlat = await getFriendsOfUserFriends(id)
+  return _.flattenDeep(friendsOfFriendsFlat)
+}
+
+async function getFriendsOfFriendsWithoutUser (id) {
+  const friendsOfFriendsWithoutUser = await getFriendsOfFriendsToArray(id)
+  return _.pullAllWith(friendsOfFriendsWithoutUser, [id], _.isEqual)
+}
+
+async function getFriendsOfFriendsToString (id) {
+  let friendsOfFriendsNoRepeat = await getFriendsOfFriendsWithoutUser(id)
+  return friendsOfFriendsNoRepeat.map(id => id.toString())
+}
+
+async function getFriendsOfFriendsNoRepeat (id) {
+  const friendsOfFriendsNoRepeat = await getFriendsOfFriendsToString(id)
+  return _.uniq(friendsOfFriendsNoRepeat)
+}
+
+module.exports = { getPopulateSuggestions, getUserById, getFriendsById, getFriendsOfUserFriends, getFriendsOfFriendsToArray, getFriendsOfFriendsWithoutUser, getFriendsOfFriendsToString, getFriendsOfFriendsNoRepeat }

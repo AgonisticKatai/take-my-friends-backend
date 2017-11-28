@@ -1,8 +1,8 @@
-const { getSuggestions } = require('../services/UserService.js')
+const { getPopulateSuggestions } = require('../services/UserService.js')
 
 const getfilteredUserSuggestions = async (req, res) => {
   const {_id: id} = req.user
-  const suggestedFriends = await getSuggestions(id)
+  const suggestedFriends = await getPopulateSuggestions(id)
   res.json(suggestedFriends)
 }
 
