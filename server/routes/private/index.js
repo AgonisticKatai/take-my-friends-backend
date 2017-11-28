@@ -33,5 +33,6 @@ router.delete('/message_inbox/:id', captureInboxParams, removeInboxMessageById, 
 router.delete('/message_outbox/:id', captureOutboxParams, removeOutboxMessageById, removeOutboxMessageResultOk)
 router.get('/friends_jobs', getFriendsJobs)
 router.get('/suggestions', getfilteredUserSuggestions)
+router.get('/auth/linkedin', passport.authenticate('linkedin', { state: 'SOME STATE' }), (req, res) => { })
 
 module.exports = router
