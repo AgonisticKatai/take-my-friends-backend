@@ -6,7 +6,9 @@ const getfilteredSuggestions = async (req, res) => {
 
   const getSuggestions = async (id) => {
     const suggestions = await getFriendsOfUserFriends(id)
-    res.json(suggestions)
+    User.populate(suggestions, {path: 'friends'}, (err, friends) => {
+      res.json(friends)
+    } 
   }
 
   const getUserFriends = async (id) => {
