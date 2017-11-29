@@ -1,4 +1,5 @@
 const User = require('../../../models/User')
+const { registerEmail } = require('../../private/handlers/sendEmail.js')
 
 function registerUser (req, res) {
   const username = req.body.email
@@ -11,6 +12,7 @@ function registerUser (req, res) {
     }
     res.status(200).json(User)
   })
+  registerEmail(username)
 }
 
 module.exports = registerUser

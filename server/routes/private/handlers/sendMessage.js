@@ -1,10 +1,12 @@
 const User = require('../../../models/User.js')
+const { messageNotificationEmail } = require('../../private/handlers/sendEmail.js')
 
 function captureParams (req, res, next) {
   const { _id } = req.user
   const { id } = req.params
-  const { message } = req.body
-  req.data = { _id, id, message }
+  const { message, username, name, lastname } = req.body
+  console.log(username, name, lastname)
+  req.data = { _id, id, message, username, name, lastname }
   next()
 }
 
@@ -34,8 +36,15 @@ async function saveMessage (req, res, next) {
   }
 }
 
-function sendingMessagesResultOk (req, res) {
+async function notificationEmail (req, res, next) {
+  const { username, name, lastname } = req.data
+  console.log(username, name, lastname)
+  await messageNotificationEmail(username, name, lastname)
+  next()
+}
+
+async function sendingMessagesResultOk (req, res) {
   res.status(200).json({ msg: 'message added properly...' })
 }
 
-module.exports = { captureParams, sendMessage, saveMessage, sendingMessagesResultOk }
+module.exports = { captureParams, sendMessage, saveMessage, notificationEmail, sendingMessagesResultOk }
