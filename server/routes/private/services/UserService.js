@@ -2,16 +2,18 @@ const _ = require('lodash')
 const User = require('../../../models/User.js')
 
 async function getPopulateSuggestions (id) {
-  const suggestions = await getFriendsOfFriendsNoRepeat(id)
-  const suggestionsPopulated = suggestions.map(user => {
+  const suggestions = await getSuggestionsCompareUserFriends(id)
+  console.log('suggestions', suggestions)
+  const SuggestionsPopulated = suggestions.map(user => {
     return getUserById(user)
   })
-  let SuggestionsPopulated = await Promise.all(suggestionsPopulated)
-  return SuggestionsPopulated
+  let suggestionsPopulated = await Promise.all(SuggestionsPopulated)
+  return suggestionsPopulated
 }
 
 async function getUserById (id) {
   const user = await User.findById(id)
+  console.log('getUserById....', user)
   return user
 }
 
@@ -49,4 +51,17 @@ async function getFriendsOfFriendsNoRepeat (id) {
   return _.uniq(friendsOfFriendsNoRepeat)
 }
 
-module.exports = { getPopulateSuggestions, getUserById, getFriendsById, getFriendsOfUserFriends, getFriendsOfFriendsToArray, getFriendsOfFriendsWithoutUser, getFriendsOfFriendsToString, getFriendsOfFriendsNoRepeat }
+async function getSuggestionsCompareUserFriends (id) {
+  let friendsOfFriends = await getFriendsOfFriendsNoRepeat(id)
+  let userFriends = await getFriendsById(id)
+  // let friendsOfFriendsFlat = _.flattenDeep(friendsOfFriends)
+  // friendsOfFriendsFlat = friendsOfFriendsFlat.map(friend => friend.toString())
+  // let userFriendsFlat = _.flattenDeep(userFriends)
+  // userFriendsFlat = userFriendsFlat.map(friend => friend.toString())
+  const suggestionsCompareUserFriends = friendsOfFriends.filter(userFriend => {
+    if (!userFriends.includes(userFriend)) { return userFriend }
+  })
+  return suggestionsCompareUserFriends
+}
+
+module.exports = { getPopulateSuggestions, getUserById, getFriendsById, getFriendsOfUserFriends, getFriendsOfFriendsToArray, getFriendsOfFriendsWithoutUser, getFriendsOfFriendsToString, getFriendsOfFriendsNoRepeat, getSuggestionsCompareUserFriends }
