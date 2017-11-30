@@ -3,7 +3,6 @@ const User = require('../../../models/User.js')
 
 async function getPopulateSuggestions (id) {
   const suggestions = await getSuggestionsCompareUserFriends(id)
-  console.log('suggestions', suggestions)
   const SuggestionsPopulated = suggestions.map(user => {
     return getUserById(user)
   })
