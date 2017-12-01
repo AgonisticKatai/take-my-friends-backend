@@ -58,7 +58,6 @@ async function getSuggestionsCompareUserFriends (id) {
   userFriendsFlat = userFriendsFlat.map(friend => friend.toString())
   const suggestionsCompareUserFriends = friendsOfFriendsFlat.filter(userFriend => {
     if (!userFriendsFlat.includes(userFriend)) {
-      console.log(userFriend, userFriends)
       return userFriend
     }
   })
