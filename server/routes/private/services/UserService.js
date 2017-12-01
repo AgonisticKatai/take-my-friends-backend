@@ -12,7 +12,6 @@ async function getPopulateSuggestions (id) {
 
 async function getUserById (id) {
   const user = await User.findById(id)
-  console.log('getUserById....', user)
   return user
 }
 
@@ -53,12 +52,15 @@ async function getFriendsOfFriendsNoRepeat (id) {
 async function getSuggestionsCompareUserFriends (id) {
   let friendsOfFriends = await getFriendsOfFriendsNoRepeat(id)
   let userFriends = await getFriendsById(id)
-  // let friendsOfFriendsFlat = _.flattenDeep(friendsOfFriends)
-  // friendsOfFriendsFlat = friendsOfFriendsFlat.map(friend => friend.toString())
-  // let userFriendsFlat = _.flattenDeep(userFriends)
-  // userFriendsFlat = userFriendsFlat.map(friend => friend.toString())
-  const suggestionsCompareUserFriends = friendsOfFriends.filter(userFriend => {
-    if (!userFriends.includes(userFriend)) { return userFriend }
+  let friendsOfFriendsFlat = _.flattenDeep(friendsOfFriends)
+  friendsOfFriendsFlat = friendsOfFriendsFlat.map(friend => friend.toString())
+  let userFriendsFlat = _.flattenDeep(userFriends)
+  userFriendsFlat = userFriendsFlat.map(friend => friend.toString())
+  const suggestionsCompareUserFriends = friendsOfFriendsFlat.filter(userFriend => {
+    if (!userFriendsFlat.includes(userFriend)) {
+      console.log(userFriend, userFriends)
+      return userFriend
+    }
   })
   return suggestionsCompareUserFriends
 }

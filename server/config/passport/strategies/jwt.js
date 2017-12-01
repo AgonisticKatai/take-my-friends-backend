@@ -7,11 +7,9 @@ const jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken()
 const options = { jwtFromRequest, secretOrKey }
 
 const jwtStrategy = new JwtStrategy(options, (payload, done) => {
-
-  User.findById( payload.id )
-    .then( user => done(null, user) )
-    .catch( err => done(err, null) )
-
+  User.findById(payload.id)
+    .then(user => done(null, user))
+    .catch(err => done(err, null))
 })
 
 module.exports = jwtStrategy
